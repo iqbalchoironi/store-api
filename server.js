@@ -3,20 +3,13 @@ const app =  express();
 const dotenv = require('dotenv');
 dotenv.config();
 
-const query = require('./src/db/query')
+const usersRoute = require('./src/routes/usersRoute');
 
+app.use(express.json())
+app.use(express.urlencoded());
 
-app.get('/', async (req, res) => {
-    try {
-        const newTodo = await query(
-            "INSERT INTO users (username, email, password) VALUES($1,$2,$3) RETURNING *",
-            ['test','test@test.com','test123']
-        );
-        res.json(newTodo.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-})
+// routes
+app.use('/api/v1', usersRoute);
 
 // Unmatched routes handler
 app.use((req, res) => {
