@@ -5,6 +5,7 @@ dotenv.config();
 
 const usersRoute = require('./src/routes/usersRoute');
 const productRoute = require('./src/routes/productRoute');
+const cartRoute = require('./src/routes/cartRoute');
 
 app.use(express.json())
 app.use(express.urlencoded());
@@ -12,6 +13,7 @@ app.use(express.urlencoded());
 // routes
 app.use('/api/v1', usersRoute);
 app.use('/api/v1', productRoute);
+app.use('/api/v1', cartRoute);
 
 // Unmatched routes handler
 app.use((req, res) => {
