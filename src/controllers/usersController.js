@@ -78,5 +78,34 @@ module.exports = {
             errorMessage.message = 'Operation was not successful';
             return res.status(status.error).send(errorMessage);
         }
+    },
+
+    addAddress: async (req, res) => {
+        const { alamat, kelurahan, kota, provinsi } = req.body;
+        const { id } = req.user;
+        const queryAddAddressUser = `INSERT INTO address(alamat, kelurahan, kota, provinsi, user_id)
+                                     VALUES($1,$2,$3,$4,$5)
+                                     returning *`
+        const values = [
+            alamat,
+            kelurahan,
+            kota,
+            provinsi,
+            id
+        ]
+
+        try {
+            const { rows } = await query(queryAddAddressUser, values);
+            const dbResponse = rows[0];
+            delete dbResponse.create_at;
+            delete dbResponse.update_at;
+
+            successMessage.data = dbResponse;
+            successMessage.message = 'successfully created your address';
+            return res.status(status.created).send(successMessage);
+        } catch(error) {
+            console.log(error)
+        }
+
     }
 }

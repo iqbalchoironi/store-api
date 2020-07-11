@@ -83,10 +83,11 @@ CREATE TYPE order_status AS ENUM ('menunggu pembayaran', 'sedang dikonfirmasi', 
 CREATE TABLE orders(
 	id uuid UNIQUE NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
 	status order_status NOT NULL DEFAULT 'menunggu pembayaran',
-	resi_code VARCHAR (100) NOT NULL,
+	resi_code VARCHAR (100),
 	total_order_price INT NOT NULL CHECK (total_order_price > 0),
 	delivery_fee INT NOT NULL CHECK (delivery_fee > 0),
-	product_category_id uuid NOT NULL REFERENCES product_category(id),
+	user_id uuid NOT NULL REFERENCES users(id),
+	address_id uuid NOT NULL REFERENCES address(id),
 	create_at TIMESTAMP NOT NULL DEFAULT Now(),
 	update_at TIMESTAMP
 );
