@@ -97,7 +97,7 @@ CREATE TABLE detail_orders(
 	order_price INT NOT NULL CHECK (order_price > 0),
 	qty SMALLINT NOT NULL CHECK (qty > 0),
 	note TEXT,
-	orders_id uuid NOT NULL REFERENCES orders(id),
+	orders_id uuid NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
 	product_id uuid NOT NULL REFERENCES product(id),
 	create_at TIMESTAMP NOT NULL DEFAULT Now(),
 	update_at TIMESTAMP
