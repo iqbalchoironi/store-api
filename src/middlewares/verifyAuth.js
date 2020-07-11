@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const {status, errorMessage} = require('../helpers/payload');
 
 const verifyToken = async (req, res, next) => {
-    const { token } = req.header;
+    const { token } = req.headers;
     if( !token ) {
         errorMessage.message = 'Token not provided';
         return res.status(status.bad).send(errorMessage);
