@@ -84,8 +84,9 @@ CREATE TABLE orders(
 	id uuid UNIQUE NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
 	status order_status NOT NULL DEFAULT 'menunggu pembayaran',
 	resi_code VARCHAR (100),
-	total_order_price INT NOT NULL CHECK (total_order_price > 0),
-	delivery_fee INT NOT NULL CHECK (delivery_fee > 0),
+	total_order_price INT NOT NULL CHECK (total_order_price >= 0),
+	delivery_fee INT NOT NULL CHECK (delivery_fee >= 0),
+	delivery_method_id uuid NOT NULL REFERENCES delivery_method(id),
 	user_id uuid NOT NULL REFERENCES users(id),
 	address_id uuid NOT NULL REFERENCES address(id),
 	create_at TIMESTAMP NOT NULL DEFAULT Now(),
@@ -122,9 +123,37 @@ CREATE TYPE payment_status AS ENUM ('menunggu pembayaran', 'pembayaran berhasil'
 CREATE TABLE payment(
 	id uuid UNIQUE NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
 	payment_value INT NOT NULL CHECK (payment_value > 0),
-	payment_method VARCHAR (100) NOT NULL,
+	payment_method_id uuid NOT NULL REFERENCES payment_method(id),
 	status payment_status NOT NULL DEFAULT 'menunggu pembayaran',
 	orders_id uuid NOT NULL REFERENCES orders(id),
+	create_at TIMESTAMP NOT NULL DEFAULT Now(),
+	update_at TIMESTAMP
+);
+
+CREATE TABLE payment_method(
+	id uuid UNIQUE NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
+	name VARCHAR (100) NOT NULL,
+	transfer_code VARCHAR (100) NOT NULL,
+	provider VARCHAR (100) NOT NULL,
+	description TEXT,
+	create_at TIMESTAMP NOT NULL DEFAULT Now(),
+	update_at TIMESTAMP
+);
+
+CREATE TABLE payment_advidance(
+	id uuid UNIQUE NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
+	payment_id uuid NOT NULL REFERENCES payment(id),
+	payment_advidance_code VARCHAR (100),
+	payment_advidance_image VARCHAR (100),
+	create_at TIMESTAMP NOT NULL DEFAULT Now(),
+	update_at TIMESTAMP
+);
+
+--DELIVERY
+CREATE TABLE delivery_method(
+	id uuid UNIQUE NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
+	name VARCHAR (100) NOT NULL,
+	description TEXT,
 	create_at TIMESTAMP NOT NULL DEFAULT Now(),
 	update_at TIMESTAMP
 );
