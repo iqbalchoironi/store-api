@@ -3,11 +3,12 @@ const { status } = require('../helpers/payload');
 
 module.exports = {
     addDeliveryMethod: async (req, res) => {
-        const { name, decsription } = req.body;
-        const { rows } = query(
-            `INSERT INTO payment_method(name, decription)
-             VALUES($1,$2)`,
-            [name, decsription]
+        const { name, description } = req.body;
+        const { rows } = await query(
+            `INSERT INTO delivery_method(name, description)
+             VALUES($1,$2) returning*`,
+            [name, description]
         );
+        res.send(rows);
     }
 }
