@@ -3,11 +3,7 @@ const { status, successMessage, errorMessage } = require('../helpers/payload');
 
 module.exports = {
     addProductCategory: async (req, res) => {
-        if (req.user.role !== 'owner' && req.user.role !== 'admin') {
-            errorMessage.message = 'your account not have access';
-            return res.status(status.bad).send(errorMessage);
-        }
-
+        
         const { name } = req.body;
         const createProductCategoryQuery = `INSERT INTO product_category(name) 
                                     VALUES($1)
@@ -31,10 +27,6 @@ module.exports = {
         }
     },
     addProduct: async (req, res) => {
-        if (req.user.role !== 'owner' && req.user.role !== 'admin') {
-            errorMessage.message = 'your account not have access';
-            return res.status(status.bad).send(errorMessage);
-        }
 
         const { name, description, stock, price, product_category_id } = req.body;
         const createProductQuery = `INSERT INTO product(name,description,stock,price,product_category_id) 

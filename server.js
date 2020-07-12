@@ -7,6 +7,8 @@ const usersRoute = require('./src/routes/usersRoute');
 const productRoute = require('./src/routes/productRoute');
 const cartRoute = require('./src/routes/cartRoute');
 const ordersRoute = require('./src/routes/ordersRoute');
+const paymentRoute = require('./src/routes/paymentRoute');
+const deliveryRoute = require('./src/routes/deliveryRoute');
 
 app.use(express.json())
 app.use(express.urlencoded());
@@ -16,6 +18,8 @@ app.use('/api/v1', usersRoute);
 app.use('/api/v1', productRoute);
 app.use('/api/v1', cartRoute);
 app.use('/api/v1', ordersRoute);
+app.use('/api/v1', paymentRoute);
+app.use('/api/v1', deliveryRoute);
 
 // Unmatched routes handler
 app.use((req, res) => {
