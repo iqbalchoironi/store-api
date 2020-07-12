@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const verifyAuth = require('../middlewares/verifyAuth');
+const { verifyToken } = require('../middlewares/verifyAuth');
 const ordersController = require('../controllers/ordersController');
 
-router.post('/orders', verifyAuth, ordersController.makeOrders);
-router.delete('/orders', verifyAuth, ordersController.cancelOrders);
+router.post('/orders', verifyToken, ordersController.makeOrders);
+router.delete('/orders', verifyToken, ordersController.cancelOrders);
 
 module.exports = router;

@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/cartController');
-const verifyAuth = require('../middlewares/verifyAuth');
+const {verifyToken} = require('../middlewares/verifyAuth');
 
-router.post('/cart/product', verifyAuth, cartController.addProductToCart);
-router.put('/cart/product', verifyAuth, cartController.updateProductInCart);
-router.delete('/cart/product', verifyAuth, cartController.deleteProductInCart);
+router.post('/cart/product', verifyToken, cartController.addProductToCart);
+router.put('/cart/product', verifyToken, cartController.updateProductInCart);
+router.delete('/cart/product', verifyToken, cartController.deleteProductInCart);
 
 module.exports = router;
