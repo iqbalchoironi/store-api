@@ -26,4 +26,22 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
-module.exports = verifyToken;
+const isAdmin = (req, res, next) => {
+    if (req.user.role !== 'owner' && req.user.role !== 'admin') {
+        errorMessage.message = 'your account not have access';
+        return res.status(status.bad).send(errorMessage);
+    } else {
+        next();
+    }
+}
+
+const isOwner = (req, res, next) => {
+    if (req.user.role !== 'owner') {
+        errorMessage.message = 'your account not have access';
+        return res.status(status.bad).send(errorMessage);
+    } else {
+        next();
+    }
+}
+
+module.exports = { verifyToken, isAdmin, isOwner };
