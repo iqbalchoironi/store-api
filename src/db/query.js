@@ -6,7 +6,7 @@ const isolateClientPool = () => {
 
 const query = (sql, params) => {
     return new Promise((resolve, reject) => {
-        client.query(sql, params)
+        pool.query(sql, params)
             .then(res => {
                 resolve(res);
             })

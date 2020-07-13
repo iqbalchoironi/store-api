@@ -53,5 +53,34 @@ module.exports = {
         } catch(error) {
             console.log(error);
         }
+    },
+
+    getProductPerPage: async (req, res) => {
+        let page = req.params.page || 1;
+        let productPerPage = 10;
+
+        let startFrom = page * productPerPage - productPerPage; 
+        try {
+            const { rows } = await query(
+                `SELECT * FROM product LIMIT $1 OFFSET $2`,
+                [productPerPage, startFrom]
+            )
+            res.send(rows);
+        } catch(error){
+
+        }
+    },
+
+    getProductById: async (req, res) => {
+        let productId = req.params.id;
+        try {
+            const { rows } = await query(
+                `SELECT * FROM product WHERE id=$1`,
+                [productId]
+            )
+            res.send(rows[0]);
+        } catch(error){
+
+        }
     }
 }
