@@ -12,5 +12,16 @@ module.exports = {
         return res.send(rows)
     },
 
+    getPaymentMethod: async (req, res) => {
+        try {
+            const { rows } = await query(
+                `SELECT * FROM payment_method`
+            )
+            res.send(rows);
+        }catch(error) {
+            
+        }
+    }
+
 
 }
