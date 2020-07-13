@@ -1,8 +1,12 @@
 const pool = require("./pool");
 
+const isolateClientPool = () => {
+    return pool.connect();
+}
+
 const query = (sql, params) => {
     return new Promise((resolve, reject) => {
-        pool.query(sql, params)
+        client.query(sql, params)
             .then(res => {
                 resolve(res);
             })
@@ -12,4 +16,4 @@ const query = (sql, params) => {
     });
 }
 
-module.exports = query;
+module.exports = {isolateClientPool, query};

@@ -1,4 +1,4 @@
-const query =  require('../db/query');
+const {query} =  require('../db/query');
 const { status, successMessage, errorMessage } = require('../helpers/payload');
 
 module.exports = {
