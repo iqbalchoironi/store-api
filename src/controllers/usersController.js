@@ -107,5 +107,18 @@ module.exports = {
             console.log(error)
         }
 
+    },
+
+    getAddressByUserId: async (req, res) => {
+        const userId = req.user.id;
+        try {
+            const { rows } = await query(
+                `SELECT * FROM address WHERE user_id=$1`,
+                [userId]
+            )
+            res.send(rows);
+        }catch(error) {
+            
+        }
     }
 }
