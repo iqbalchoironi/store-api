@@ -10,5 +10,16 @@ module.exports = {
             [name, description]
         );
         res.send(rows);
+    },
+
+    getDeliveryMethod: async (req, res) => {
+        try {
+            const { rows } = await query(
+                `SELECT * FROM delivery_method`
+            )
+            res.send(rows);
+        }catch(error) {
+            
+        }
     }
 }
