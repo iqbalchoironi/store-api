@@ -3,7 +3,7 @@ const { status, successMessage, errorMessage } = require('../helpers/payload');
 
 module.exports = {
     makeOrders: async (req, res) => {
-        const { 
+        let { 
             address_id, 
             delivery_fee,
             payment_method_id,
@@ -14,20 +14,29 @@ module.exports = {
         const userId = req.user.id;
 
         const client = await isolateClientPool();
-        let totalPrice = detail_orders.reduce((total,itm) => {
-            return total + parseInt(itm.order_price) * parseInt(itm.qty);
-        }, 0);
-
-        let payment_value = totalPrice + parseInt(delivery_fee);
 
         try {
+            detail_orders = await Promise.all( detail_orders.map( async (itm, index) => {
+                let product = await client.query(
+                    `SELECT price FROM product WHERE id=$1`
+                    ,[itm.product_id]
+                );
+                itm.order_price = itm.qty * product.rows[0].price;
+                return itm;
+            }))
+            
+            let totalPrice = detail_orders.reduce((total,itm) => {
+                return total + parseInt(itm.order_price);
+            }, 0);
+            
+            let payment_value = totalPrice + parseInt(delivery_fee);
 
             await client.query('BEGIN');
 
             const ordersQuery = await client.query(
                 `INSERT INTO orders(total_order_price, delivery_fee, user_id, address_id, delivery_method_id)
                  VALUES($1,$2,$3,$4,$5) returning*`
-                ,[totalPrice, delivery_fee, userId, address_id, delivery_method_id]
+                ,[totalPrice,  parseInt(delivery_fee), userId, address_id, delivery_method_id]
             );
             
             detail_orders.forEach( async itm => {
@@ -45,7 +54,6 @@ module.exports = {
             );
 
             await client.query('COMMIT');
-            
             successMessage.message = 'success create your orders';
             res.status(status.created).send(successMessage);
         } catch(error) {
