@@ -12,7 +12,7 @@ module.exports = {
         res.send(rows);
     },
 
-    getDeliveryMethod: async (req, res) => {
+    getDeliveryMethodList: async (req, res) => {
         try {
             const { rows } = await query(
                 `SELECT * FROM delivery_method`
