@@ -86,5 +86,46 @@ module.exports = {
         } catch(error) {
             console.log(error);
         }
+    },
+
+    getOrdersById: async (req, res) => {
+
+        const ordersId = req.params.id;
+
+        try {
+            let orders = await query(
+                `SELECT orders.id, orders.status, orders.total_order_price, orders.delivery_fee, 
+                    address.alamat, address.kelurahan, address.kota, address.provinsi,
+                    delivery_method.name AS delivery_method,
+                    payment_method.name AS payment_method_name, payment_method.provider AS payment_method_provider 
+                 FROM orders
+                 INNER JOIN address ON orders.address_id = address.id
+                 INNER JOIN delivery_method ON orders.delivery_method_id = delivery_method.id
+                 INNER JOIN payment ON orders.id = payment.orders_id
+                 INNER JOIN payment_method ON payment.payment_method_id = payment_method.id
+                 WHERE orders.id = $1`,
+                [ordersId]
+            );
+            let ordersDetail = await query(
+                `SELECT detail_orders.order_price, detail_orders.qty, detail_orders.note, 
+                    product.name, product.price, 
+                    product_category.name
+                 FROM detail_orders
+                 INNER JOIN product ON detail_orders.product_id = product.id
+                 INNER JOIN product_category ON product.product_category_id = product_category.id
+                 WHERE detail_orders.orders_id = $1`,
+                [ordersId]
+            );
+            
+            orders = orders.rows[0];
+            orders.delivery_method = orders.name;
+            delete orders.name;
+            orders.detail_orders = ordersDetail.rows;
+
+            res.send(orders);
+
+        } catch(error) {
+
+        }
     }
 }
