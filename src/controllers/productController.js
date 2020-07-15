@@ -118,5 +118,32 @@ module.exports = {
         } catch(error){
 
         }
+    },
+
+    addProductRiview: async(req, res) => {
+        const { rate, field, product_id, orders_id } = req.body;
+        const userId = req.user.id;
+
+        try {
+
+            const orders = await query(
+                `SELECT * FROM orders WHERE id=$1`,
+                [orders_id]
+            );
+
+            if (orders.rows[0].user_id !== userId || orders.rows[0].status !== 'diterima') {
+                res.status(status.bad).send(errorMessage);
+            }
+            const { rows } = await query(
+                `INSERT INTO product_riview(rate,field,product_id,orders_id)
+                 VALUES($1,$2,$3,$4)`
+                [rate, field, product_id, orders_id]
+            );
+
+            res.status(status.created).send(rows[0]);
+
+        } catch(error) {
+
+        }
     }
 }
