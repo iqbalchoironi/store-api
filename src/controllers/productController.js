@@ -92,5 +92,20 @@ module.exports = {
         } catch(error){
 
         }
+    },
+
+    suggestionSearchProduct: async (req, res) => {
+        let suggestionLimit = 10;
+        let key = req.params.key;
+
+        try {
+            const { rows } = await query(
+                `SELECT name FROM product WHERE name LIKE $1 LIMIT $2`,
+                [`%${key}%`, suggestionLimit]
+            )
+            res.send(rows);
+        } catch(error){
+
+        }
     }
 }
