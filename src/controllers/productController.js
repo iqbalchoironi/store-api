@@ -23,6 +23,17 @@ module.exports = {
         }
     },
 
+    productCategoryList: async (req, res) => {
+        try {
+            const { rows } = await query(
+                `SELECT * FROM product_category`
+            )
+            res.send(rows);
+        } catch(error) {
+
+        }
+    },
+
     addProduct: async (req, res) => {
 
         const { name, description, stock, price, product_category_id } = req.body;
