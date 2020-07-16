@@ -42,7 +42,7 @@ module.exports = {
     },
 
     getDetailPaymentMethod: async (req, res) => {
-        let paymentMethodId = req.params.id;
+        let paymentMethodId = req.params.paymentMethodId;
         try {
             const { rows } = await query(
                 `SELECT * FROM payment_method WHERE id=$1`,
@@ -51,6 +51,40 @@ module.exports = {
             res.send(rows[0]);
         }catch(error) {
             
+        }
+    },
+
+    addPaymentAdvidance: async (req, res) => {
+
+        const paymentId = req.params.paymentId;
+
+        try {
+            let { rows } = await query(
+                `INSERT INTO payment_advidance(payment_id, payment_advidance_image)
+                 VALUES($1,$2) returning *`,
+                [paymentId, req.file.filename]
+            )
+
+            res.send(rows);
+        } catch(error) {
+
+        }
+    },
+
+    updatePaymentAdvidance: async (req, res) => {
+
+        const paymentId = req.params.paymentId;
+
+        try {
+            let { rows } = await query(
+                `UPDATE payment_advidance SET payment_advidance_image=$1
+                 WHERE payment_id=$2 returning *`,
+                [req.file.filename,paymentId]
+            );
+
+            res.send(rows);
+        } catch(error) {
+
         }
     }
 
