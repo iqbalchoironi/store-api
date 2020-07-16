@@ -130,20 +130,20 @@ module.exports = {
                 `SELECT * FROM orders WHERE id=$1`,
                 [orders_id]
             );
-
-            if (orders.rows[0].user_id !== userId || orders.rows[0].status !== 'diterima') {
+            
+            if (orders.rows[0].user_id !== userId) {
                 res.status(status.bad).send(errorMessage);
             }
             const { rows } = await query(
                 `INSERT INTO product_riview(rate,field,product_id,orders_id)
-                 VALUES($1,$2,$3,$4)`
+                 VALUES($1,$2,$3,$4) returning *`,
                 [rate, field, product_id, orders_id]
             );
 
             res.status(status.created).send(rows[0]);
 
         } catch(error) {
-
+            console.log(error)
         }
     }
 }
