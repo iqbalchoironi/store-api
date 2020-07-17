@@ -3,15 +3,14 @@ const { status, successMessage, errorMessage } = require('../helpers/payload');
 
 module.exports = {
     addProductCategory: async (req, res) => {
-        
         const { name } = req.body;
+        
         try {
             const { rows } = await query(
                 `INSERT INTO product_category(name) VALUES($1) returning *`, 
                 [name]
             );
             const dbResponse = rows[0];
-            console.log(dbResponse)
             delete dbResponse.create_at;
             delete dbResponse.update_at;
 
@@ -19,18 +18,59 @@ module.exports = {
             successMessage.message = 'succesfully created product category';
             return res.status(status.created).send(successMessage);
         } catch(error) {
-            console.log(error);
+            errorMessage.message = 'error when add product category';
+            errorMessage.error = error;
+            res.status(status.error).send(errorMessage);
         }
     },
 
     productCategoryList: async (req, res) => {
         try {
             const { rows } = await query(
-                `SELECT * FROM product_category`
+                `SELECT id, name FROM product_category`
             )
-            res.send(rows);
+            successMessage.message = 'read list product product';
+            successMessage.data = rows;
+            res.status(status.success).send(successMessage);
         } catch(error) {
+            errorMessage.message = 'error when read list product category';
+            errorMessage.error = error;
+            res.status(status.error).send(errorMessage);
+        }
+    },
 
+    updateProductCategory: async (req, res) => {
+        const id = req.params.id;
+        const name = req.body.name;
+
+        try {
+            const destroyOrders = query(
+                `UPDATE product_category SET name=$1 WHERE id=$2 returning *`,
+                [name,id]
+            );
+            successMessage.message = 'successfuly updated poduct category';
+            res.status(status.success).send(successMessage);
+        } catch(error) {
+            errorMessage.message = 'error when update product category';
+            errorMessage.error = error;
+            res.status(status.error).send(errorMessage);
+        }
+    },
+
+    deleteProductCategory: async (req, res) => {
+        const id = req.params.id;
+
+        try {
+            const destroyOrders = query(
+                `DELETE FROM product_category WHERE id=$1 returning *`,
+                [id]
+            );
+            successMessage.message = 'successfuly delete poduct category';
+            res.status(status.success).send(successMessage);
+        } catch(error) {
+            errorMessage.message = 'error when delete product category';
+            errorMessage.error = error;
+            res.status(status.error).send(errorMessage);
         }
     },
 
@@ -71,7 +111,7 @@ module.exports = {
             )
             res.send(rows);
         } catch(error){
-
+            
         }
     },
 
@@ -128,12 +168,12 @@ module.exports = {
         `
         try {
             let { rows } = await query(sql);
-            successMessage.message = 'Readed filtered product';
+            successMessage.message = 'Read filtered product';
             successMessage.data = rows;
             res.status(status.success).send(successMessage);
         } catch(error){
             errorMessage.message = 'Error when get product with filter';
-            errorMessage.error = error.error;
+            errorMessage.error = error;
             res.status(status.error).send(errorMessage);
         }
     },

@@ -1,5 +1,5 @@
-const successMessage = { status: 'success' };
-const errorMessage = { status: 'error' };
+const successMessage = { success: true };
+const errorMessage = { success: false };
 const status = {
   success: 200,
   error: 500,
