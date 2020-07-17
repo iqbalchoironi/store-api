@@ -89,19 +89,52 @@ module.exports = {
     },
 
     searchProduct: async (req, res) => {
-        let productPerPage = 10;
-        let page = req.params.page || 1;
-        let key = req.params.key;
+        
+        //untuk filter
+        let name = req.query.name;
+        let min_price = req.query.min_price;
+        let max_price = req.query.max_price;
+        let product_category = req.query.product_category;
 
-        let startFrom = page * productPerPage - productPerPage; 
+        //untuk pagination
+        let skip = req.query.skip;
+        let limit = req.query.limit;
+
+        //untuk sort
+        let sort_by = req.query.sort_by;
+        let sort_type = req.query.sort_type;
+
+        let sql = `
+            SELECT 
+                product.id,
+                product.name,
+                product.description,
+                product.stock,
+                product.price,
+                product_category.name category_name
+            FROM
+                product
+            LEFT JOIN
+                product_category
+                    ON product.product_category_id = product_category.id
+            WHERE product.stock > 0
+                ${name ? ` AND product.name LIKE '%${name}%'` : ''}
+                ${min_price ? ` AND product.price >= ${min_price}` : ''}
+                ${max_price ? ` AND product.price <= ${max_price}` : ''}
+                ${product_category ? ` AND product_category.name LIKE '%${product_category}%'` : ''}
+            ${sort_by ? ` ORDER BY ${sort_by} ${sort_type ? sort_type : ' ASC'}` : ''}
+            ${limit ? ` LIMIT ${limit}` : ''}
+            ${skip ? ` OFFSET ${skip}` : ''}
+        `
         try {
-            const { rows } = await query(
-                `SELECT * FROM product WHERE name LIKE $1 LIMIT $2 OFFSET $3`,
-                [`%${key}%`,productPerPage, startFrom]
-            )
-            res.send(rows);
+            let { rows } = await query(sql);
+            successMessage.message = 'Readed filtered product';
+            successMessage.data = rows;
+            res.status(status.success).send(successMessage);
         } catch(error){
-
+            errorMessage.message = 'Error when get product with filter';
+            errorMessage.error = error.error;
+            res.status(status.error).send(errorMessage);
         }
     },
 

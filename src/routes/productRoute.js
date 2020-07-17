@@ -10,7 +10,7 @@ router.post('/product/category', verifyToken, isAdmin, addProductCategory);
 router.post('/product/review', verifyToken, addProductRiview);
 router.get('/product/category', verifyToken, isAdmin, productCategoryList);
 router.get('/product/page/:page', getProductPerPage);
-router.get('/product/search/:key/page/:page', searchProduct);
+router.get('/product/search', searchProduct);
 router.get('/product/suggestion/:key', suggestionSearchProduct);
 router.get('/product/:id', getProductById);
 
